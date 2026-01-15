@@ -97,7 +97,7 @@ const WeatherApp = () => {
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Search for a city..."
-                className="flex-1 px-6 py-4 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="flex-1 px-6 py-4 rounded-lg text-lg border border-blue-600 focus:outline-none focus:ring-2 focus:ring-white/50"
               />
               <button
                 onClick={handleSearch}
