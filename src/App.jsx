@@ -64,6 +64,56 @@ const WeatherApp = () => {
     return date.toLocaleDateString('en-US', { weekday: 'short' });
   };
 
+   const fetchWeatherByCoords = async (lat, lon) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch(
+        `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${lat},${lon}&days=5&aqi=no`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Unable to fetch weather data');
+      }
+      
+      const data = await response.json();
+      setWeather(data);
+      setForecast(data.forecast.forecastday);
+      setCity(data.location.name);
+      setLocationDetected(true);
+    } catch (err) {
+      setError(err.message);
+      // Fallback to default city
+      fetchWeather(city);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUserLocation = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetchWeatherByCoords(latitude, longitude);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          // Fallback to default city if geolocation fails
+          fetchWeather(city);
+        }
+      );
+    } else {
+      // Geolocation not supported, use default city
+      fetchWeather(city);
+    }
+  };
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600">
       {/* Header */}
